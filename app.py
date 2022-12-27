@@ -10,11 +10,11 @@ debug = DebugToolbarExtension(app)
 
 
 boggle_game = Boggle()
+board = boggle_game.make_board()
 
 
 @app.route('/')
 def set_board():
-    board = boggle_game.make_board()
     session['board'] = board
     return render_template('index.html', board=board)
 
@@ -22,10 +22,15 @@ def set_board():
 @app.route('/validate-guess', methods=['POST'])
 def validate_guess():
     guess = request.form['user_guess_word']
-    return render_template('output.html', guess=guess)
+    return boggle_game.check_valid_word(board, guess)
+    # validate the word
+    # return true/false
 
-# js
-# write a handler in app.js for users to submit the form
-# read the form and find out what's the user input
-# call "validate-guess" and send in user input
-# await axios.get('/check-guess', { params: { guess: guess }});
+    # return render_template('output.html', guess=guess)
+
+    # js
+    # write a handler in app.js for users to submit the form
+    # read the form and find out what's the user input
+    # call "validate-guess" and send in user input
+    # await axios.get('/check-guess', { params: { guess: guess }});
+    # make a api call and pass the parameter
