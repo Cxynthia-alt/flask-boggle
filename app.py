@@ -1,5 +1,5 @@
 from boggle import Boggle
-from flask import Flask, request, render_template, redirect, flash, session
+from flask import Flask, request, render_template, redirect, flash, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 
 app = Flask(__name__)
@@ -19,10 +19,11 @@ def set_board():
     return render_template('index.html', board=board)
 
 
-@app.route('/validate-guess', methods=['POST'])
+@app.route('/validate-guess')
 def validate_guess():
-    guess = request.form['user_guess_word']
-    return boggle_game.check_valid_word(board, guess)
+    guess = request.args["guess"]
+    validate_result = boggle_game.check_valid_word(board, guess)
+    return jsonify({guess: validate_result})
     # validate the word
     # return true/false
 
