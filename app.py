@@ -23,20 +23,18 @@ def set_board():
 def validate_guess():
     guess = request.args["guess"]
     validate_result = boggle_game.check_valid_word(board, guess)
+    session['score'] = 0
     if validate_result == 'ok':
-        if session['score'] == None:
+        if session['score'] == 0:
             session['score'] = len(guess)
         else:
             session['score'] += len(guess)
     return jsonify({guess: validate_result})
-    # validate the word
-    # return true/false
 
-    # return render_template('output.html', guess=guess)
 
-    # js
-    # write a handler in app.js for users to submit the form
-    # read the form and find out what's the user input
-    # call "validate-guess" and send in user input
-    # await axios.get('/check-guess', { params: { guess: guess }});
-    # make a api call and pass the parameter
+@app.route('/score-and-submission-times')
+def score_and_submission():
+    request.json()
+    import pdb
+    pdb.set_trace()
+    return None

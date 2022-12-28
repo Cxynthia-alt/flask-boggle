@@ -22,10 +22,11 @@
   <form id="boggle_form">
     <label for="user_guess_word">What's your guess?</label>
     <input type="text" id="user_guess_word" name="user_guess_word">
-    <button>Validate</button>
+    <button id="submit">Validate</button>
   </form>
+  <p>Score: {{session['score']}}</p>
   <section id="result">
-    <p>Score: {{session['score']}}</p>
+
   </section>
 
 
