@@ -1,18 +1,15 @@
+// set up variables
 let resultSection = document.querySelector('#result')
 let btn = document.querySelector('#submit')
 let countSubmit = 0;
+let resultMsg = document.createElement('div')
 let scoreDiv = document.createElement('div')
 let submitDiv = document.createElement('div')
-
-
-scoreDiv.append(resultSection)
-submitDiv.append(resultSection)
 
 // GET request
 async function getData(word) {
   const res = await axios.get('/validate-guess', { params: { guess: word } });
   console.log(res.data)
-  return res.data
 }
 
 // set a timer
@@ -51,16 +48,17 @@ form.addEventListener('submit', async function (e) {
   // form submission counts
   countSubmit++
   let subResult = await addData(countSubmit)
-
+  let subCounts = subResult['submissionCount']
 
   // front-end
-  resultSection.innerText = msg
+  resultMsg.innerText = msg
+  submitDiv.innerText = subCounts
+
+  resultMsg.append(resultSection)
+  scoreDiv.append(resultSection)
+  submitDiv.append(resultSection)
   form.reset();
 })
-
-
-//
-
 
 
 async function addData(countSubmit) {

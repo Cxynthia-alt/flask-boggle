@@ -36,7 +36,6 @@ def validate_guess():
 def score_and_submission():
     submission = request.form['submissionCount']
     session['submission'] = session.get('submission', 0) + 1
-    return request.json()
     # import pdb
     # pdb.set_trace()
-    # return None
+    return request.json()
