@@ -9,7 +9,7 @@ let submitDiv = document.createElement('div')
 // GET request
 async function getData(word) {
   const res = await axios.get('/validate-guess', { params: { guess: word } });
-  console.log(res.data)
+  return res.data
 }
 
 // set a timer

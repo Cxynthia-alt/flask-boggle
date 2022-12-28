@@ -22,13 +22,14 @@ def set_board():
 @app.route('/validate-guess')
 def validate_guess():
     guess = request.args["guess"]
-
     validate_result = boggle_game.check_valid_word(board, guess)
     if validate_result == 'ok':
         if session['score'] == None:
             session['score'] = len(guess)
         else:
             session['score'] += len(guess)
+    else:
+        session['score'] == None
     return jsonify({guess: validate_result, 'score': session['score']})
 
 
