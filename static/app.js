@@ -63,6 +63,8 @@ form.addEventListener('submit', async function (e) {
 
 async function addData(countSubmit) {
   const res = await axios.post('/score-and-submission-times', {
-    submissionCount: countSubmit
+    data: {
+      submissionCount: countSubmit
+    }
   })
 }

@@ -23,20 +23,19 @@ def set_board():
 def validate_guess():
     guess = request.args["guess"]
     validate_result = boggle_game.check_valid_word(board, guess)
+    score_point = session.get('score', None)
     if validate_result == 'ok':
-        if session['score'] == None:
+        if score_point == None:
             session['score'] = len(guess)
         else:
             session['score'] += len(guess)
-    else:
-        session['score'] == None
     return jsonify({guess: validate_result, 'score': session['score']})
 
 
 @app.route('/score-and-submission-times', methods=['POST'])
 def score_and_submission():
-    submission = request.form['submissionCount']
+    submission = request.data['submissionCount']
     session['submission'] = session.get('submission', 0) + 1
-    # import pdb
-    # pdb.set_trace()
+    import pdb
+    pdb.set_trace()
     return request.json()
