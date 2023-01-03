@@ -8,12 +8,14 @@ class Boggle():
 
     def __init__(self):
 
+        # update self.words with the new arr by instantiating read_dict()
         self.words = self.read_dict("words.txt")
 
     def read_dict(self, dict_path):
         """Read and return all words in dictionary."""
 
         dict_file = open(dict_path)
+        # convert the word.txt to an array called words without space using strip()
         words = [w.strip() for w in dict_file]
         dict_file.close()
         return words
@@ -24,6 +26,7 @@ class Boggle():
         board = []
 
         for y in range(5):
+            # generate random letters and populate the row and append the row to arr
             row = [choice(string.ascii_uppercase) for i in range(5)]
             board.append(row)
 
@@ -67,6 +70,9 @@ class Boggle():
 
         if len(word) == 1:
             return True
+
+        # if the coordinate has not been used, continute
+        # if used,
 
         # Otherwise, this letter is good, so note that we've seen it,
         # and try of all of its neighbors for the first letter of the
@@ -134,6 +140,7 @@ class Boggle():
         # Find starting letter --- try every spot on board and,
         # win fast, should we find the word at that place.
 
+        # x 0-5 y 0-5 coordinates
         for y in range(0, 5):
             for x in range(0, 5):
                 if self.find_from(board, word, y, x, seen=set()):
