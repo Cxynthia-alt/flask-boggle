@@ -20,7 +20,7 @@ def set_board():
     session['score'] = 0
     session['submit_count'] = 0
     session['highest_score'] = 0
-    return render_template('index.html', board=board)
+    return render_template('index.html', board=board, highest_score=session.get('highest_score', 0))
 
 
 @app.route('/validate-guess')
