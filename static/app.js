@@ -1,42 +1,48 @@
 // set up variables
 let resultSection = document.querySelector('#result')
-let countSubmit = 0;
-let highestScore_point = 0;
+let form = document.querySelector('#boggle_form');
 let resultMsg = document.createElement('div')
-let submitDiv = document.createElement('div')
-let highestScoreEle = document.querySelector('#highestScore')
-localStorage.setItem('highestScoreInLocalStorage', highestScore)
+let showScore = document.createElement('div')
+let resultWordList = document.createElement('ul')
+let resultWord = document.createElement('li')
 
 
-resultMsg.setAttribute('id', 'resultMsg')
-submitDiv.setAttribute('id', 'submitCount')
+
+resultMsg.setAttribute('class', 'resultMsg')
+showScore.setAttribute('class', 'showScore')
+resultWordList.setAttribute('class', 'wordList')
+resultSection.append(resultWordList)
 
 
-// GET request
+class BoogleGame {
+  constructor() {
+    this.score = 0;
+    this.countTime = 0;
+    this.timer = setInterval(tick, 1000)
+  }
+
+//GET reuquest to check the word
 async function getData(word) {
   const res = await axios.get('/validate-guess', { params: { guess: word } });
   return res.data
 }
 
 // set a timer
-let countTime = 0;
-setInterval(async function () {
-  countTime++
-  if (countTime == 60) {
-    // make the api call and update how many times the game is played
-    await addData(countSubmit)
-    clearinterval()
-    countTime = 0
+
+async function tick() {
+  this.countTime++
+  if (this.countTime == 60) {
+    clearInterval(this.timer)
+    await addData()
+    this.countTime = 0
   }
-}, 1000)
+
+}
 
 
 // form submission
-const form = document.querySelector('#boggle_form');
+
 form.addEventListener('submit', async function (e) {
-  if (countTime > 60) {
-    return
-  }
   e.preventDefault();
 
 
@@ -47,35 +53,31 @@ form.addEventListener('submit', async function (e) {
   let msg
   if (result == 'ok') {
     msg = "Dingdingding!"
+    this.score += userInput.length
+    resultWord.innerText = userInput
   } else if (result == 'not-on-board') { msg = 'The word is not on board' }
   else msg = 'It\'s not a word'
 
-  // form submission counts
-  countSubmit++
-
   //get the highest score
-  let highestScoreFromBackEnd = resultJSON['highest_score']
-  let highestScoreInLocalStorage = localStorage.getItem('highestScoreInLocalStorage')
-  let highestScore = highestScoreFromBackEnd > highestScoreFromBackEnd ? highestScoreFromBackEnd : highestScoreInLocalStorage
 
   // front-end
   resultMsg.innerText = msg
-  submitDiv.innerText = 'Number of validation: ' + countSubmit
-  highestScoreEle.innerText = highestScore
 
-
-
+  resultWordList.append(resultWord)
   resultSection.append(resultMsg)
-  resultSection.append(submitDiv)
-  resultSection.append(highestScore)
+
   form.reset();
 })
 
+//POST request to update score/count_submit
+async function addData() {
+  const res = await axios.post('/score-and-submission-times', { score: this.score })
+  if (res.data.brokeRecord) {
+    showScore.innerText = 'New record: ' + this.score
+  } else {
+    showScore.innerText = 'Final record: ' + this.score
+  }
+  resultSection.append(showScore)
+}
 
-async function addData(countSubmit) {
-  const res = await axios.post('/score-and-submission-times', {
-    data: {
-      submissionCount: countSubmit
-    }
-  })
 }

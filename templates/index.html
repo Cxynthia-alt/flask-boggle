@@ -19,6 +19,7 @@
     </tr>
     {% endfor %}
   </table>
+
   <form id="boggle_form">
     <label for="user_guess_word">What's your guess?</label>
     <input type="text" id="user_guess_word" name="user_guess_word">
@@ -26,7 +27,7 @@
   </form>
 
   <section id="result">
-    <p id="highestScore">Highest Score: {{highest_score}}</p>
+    <p>High Score: <b>{{ highscore }}</b> in {{submit_count}} plays</p>
   </section>
 
 
