@@ -1,84 +1,80 @@
-// set up variables
-let resultSection = document.querySelector('#result')
-let resultMsg = document.createElement('div')
-let showScore = document.createElement('div')
-let resultWordList = document.createElement('ul')
-let resultWord = document.createElement('li')
+"use strict";
+const resultSection = document.querySelector("#result");
+const resultMsg = document.createElement("div");
+const showScore = document.createElement("div");
+const resultWordList = document.createElement("ul");
+const resultWord = document.createElement("li");
+const ERR_MSG_BY_ERR_CODE = {
+  ok: "Dingdingding!",
+  "not-on-board": "The word is not on board",
+};
+
+resultMsg.setAttribute("class", "resultMsg");
+showScore.setAttribute("class", "showScore");
+resultWordList.setAttribute("class", "wordList");
 
 
-
-resultMsg.setAttribute('class', 'resultMsg')
-showScore.setAttribute('class', 'showScore')
-resultWordList.setAttribute('class', 'wordList')
-resultSection.append(resultWordList)
-
-
+// eslint-disable-next-line no-unused-vars
 class BoogleGame {
   constructor() {
     this.score = 0;
     this.countTime = 0;
-    this.timer = setInterval(tick, 1000)
-    this.form = document.querySelector('#boggle_form');
-    this.form.addEventListener('click', this.eventHanderler.bind(this))
+    this.timer = setInterval(this.tick.bind(this), 1000);
+    this.form = document.querySelector("#boggle_form");
+    this.form.addEventListener("submit", this.eventHandler.bind(this));
   }
 
   //GET reuquest to check the word
-  async getData(word) {
-    const res = await axios.get('/validate-guess', { params: { guess: word } });
-    return res.data
+  static async getData(word) {
+    // eslint-disable-next-line no-undef
+    const res = await axios.get("/validate-guess", { params: { guess: word } });
+    return res.data;
   }
 
   // set a timer
 
   async tick() {
-    this.countTime++
-    if (this.countTime == 60) {
-      clearInterval(this.timer)
-      await addData()
-      this.countTime = 0
+    this.countTime++;
+    if (this.countTime === 60) {
+      clearInterval(this.timer);
+      await this.addData();
+      this.countTime = 0;
     }
-
   }
-
 
   // form submission
 
-  async eventHanderler(e) {
+  async eventHandler(e) {
     e.preventDefault();
 
-
     // get the result after checking the word in back-end
-    let userInput = document.querySelector('#user_guess_word').value;
-    let resultJSON = await getData(userInput)
-    let result = resultJSON[userInput]
-    let msg
-    if (result == 'ok') {
-      msg = "Dingdingding!"
-      this.score += userInput.length
-      resultWord.innerText = userInput
-    } else if (result == 'not-on-board') { msg = 'The word is not on board' }
-    else msg = 'It\'s not a word'
+    const userInput = document.querySelector("#user_guess_word").value;
+    const resultJSON = await BoogleGame.getData(userInput);
+    const result = resultJSON[userInput];
+    const msg = ERR_MSG_BY_ERR_CODE[result] || "It's not a word";
+    if (result === "ok") {
+      this.score += userInput.length;
+      resultWord.innerText = userInput;
+      resultWordList.append(resultWord);
+      resultSection.append(resultWordList);
+    }
 
-    //get the highest score
+    resultMsg.innerText = msg;
 
-    // front-end
-    resultMsg.innerText = msg
+    resultSection.append(resultMsg);
 
-    resultWordList.append(resultWord)
-    resultSection.append(resultMsg)
-
-    form.reset();
+    this.form.reset();
   }
 
   //POST request to update score/count_submit
   async addData() {
-    const res = await axios.post('/score-and-submission-times', { score: this.score })
-    if (res.data.brokeRecord) {
-      showScore.innerText = 'New record: ' + this.score
-    } else {
-      showScore.innerText = 'Final record: ' + this.score
-    }
-    resultSection.append(showScore)
+    const res = await axios.post("/score-and-submission-times", {
+      score: this.score,
+    });
+    showScore.innerText =
+      `${res.data.brokenRecord ? "New" : "Final"} record: ` + this.score;
+    resultSection.append(showScore);
   }
-
 }
+
+new BoogleGame();
